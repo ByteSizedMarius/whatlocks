@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>whatlocks</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Core\Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- System.Web.Script.Serialization.JavaScriptSerializer: in-box JSON on net472,
+         so the CLI emits JSON output without pulling a NuGet serializer. -->
+    <Reference Include="System.Web.Extensions" />
+  </ItemGroup>
+
+</Project>

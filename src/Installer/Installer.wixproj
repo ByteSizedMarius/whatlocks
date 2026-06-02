@@ -11,5 +11,6 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\App\ShowWhatProcessLocksFile.csproj"/>
+    <ProjectReference Include="..\Cli\Cli.csproj"/>
   </ItemGroup>
 </Project>

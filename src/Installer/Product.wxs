@@ -26,6 +26,17 @@
         <File Id="id2" Source="$(var.ShowWhatProcessLocksFile.TargetDir)\ShowWhatProcessLocksFile.exe.config"/>
         <File Id="id3" Source="$(var.ShowWhatProcessLocksFile.ProjectDir)\Icon\icon.ico"/>
 
+        <!-- Shared lock-finding engine: both the GUI and the CLI load Core.dll from here. -->
+        <File Id="coreDll" Source="$(var.ShowWhatProcessLocksFile.TargetDir)\Core.dll"/>
+
+        <!-- Headless CLI (`whatlocks`) for command-line and scripted use. -->
+        <File Id="whatlocksExe" Source="$(var.Cli.TargetDir)\whatlocks.exe"/>
+        <File Id="whatlocksConfig" Source="$(var.Cli.TargetDir)\whatlocks.exe.config"/>
+
+        <!-- Put the install dir on the user PATH so `whatlocks` resolves by bare name
+             from any shell. Removed on uninstall. -->
+        <Environment Id="WhatlocksPath" Name="PATH" Value="[INSTALLFOLDER]" Action="set" Part="last" System="no" Permanent="no"/>
+
         <!-- https://stackoverflow.com/a/29769228/7585517 -->
         <RegistryKey Root="HKCU" Key="Software\Classes\*\shell\ShowWhatProcessLocksFile">
           <RegistryValue Type="string" Value="Show what locks this file"/>

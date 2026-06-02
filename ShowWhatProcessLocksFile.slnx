@@ -17,6 +17,9 @@
   <Project Path="src/Core/Core.csproj">
     <Platform Project="x64" />
   </Project>
+  <Project Path="src/Cli/Cli.csproj">
+    <Platform Project="x64" />
+  </Project>
   <Project Path="src/Installer/Installer.wixproj" Type="b7dd6f7e-def8-4e67-b5b7-07ef123db6f0" />
   <Project Path="src/Test/Test.csproj">
     <Platform Project="x64" />
