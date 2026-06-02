@@ -1,5 +1,4 @@
 using System.IO;
-using System.Windows.Media;
 using Microsoft.Win32.SafeHandles;
 using ShowWhatProcessLocksFile.LockFinding.Interop;
 using ShowWhatProcessLocksFile.LockFinding.Utils;
@@ -11,10 +10,9 @@ public record struct ProcessInfo(
     string? ProcessName,
     string? ProcessExecutableFullName,
     string? DomainAndUserName,
-    ImageSource? Icon,
     List<string> LockedFileFullNames);
 
-internal static class LockFinder
+public static class LockFinder
 {
     public static IEnumerable<ProcessInfo> FindWhatProcessesLockPath(CanonicalPath path)
     {
@@ -124,7 +122,6 @@ internal static class LockFinder
                         if (processInfo.ProcessExecutableFullName != null)
                         {
                             processInfo.ProcessName = Path.GetFileName(processInfo.ProcessExecutableFullName);
-                            processInfo.Icon = ProcessUtils.GetIcon(processInfo.ProcessExecutableFullName);
                         }
 
                         result.Add(processInfo);

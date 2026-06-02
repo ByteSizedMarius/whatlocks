@@ -46,7 +46,7 @@ internal static class MappedDriveResolver
     }
 }
 
-internal sealed class CanonicalPath
+public sealed class CanonicalPath
 {
     public string Path { get; }
     public bool IsDirectory { get; }

@@ -25,7 +25,7 @@
         <local:ExpandToggleButton IsChecked="{Binding IsExpanded}" Grid.Column="0" Grid.Row="0" Margin="5" Height="20"
                                   Width="20" />
 
-        <Image Grid.Column="1" Grid.Row="0" Source="{Binding Process.Icon}" Height="32" Width="32" Margin="5" />
+        <Image Grid.Column="1" Grid.Row="0" Source="{Binding Icon}" Height="32" Width="32" Margin="5" />
 
         <TextBlock Grid.Column="2" Grid.Row="0" Margin="5" FontSize="12">
             <Run FontWeight="Bold" Text="{Binding Process.ProcessName, Mode=OneWay}" /> <LineBreak />

@@ -108,7 +108,6 @@ internal class LockFinderTest
             AssertLocksPath(info, p);
         }
 
-        Assert.That(info.Icon, Is.Not.Null);
         Assert.That(info.ProcessExecutableFullName, Is.Not.Null);
     }
 

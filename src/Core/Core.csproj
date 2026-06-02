@@ -1,13 +1,14 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <UseWPF>true</UseWPF>
-    <ApplicationIcon>Icon\icon.ico</ApplicationIcon>
-    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
-  </PropertyGroup>
+<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <!-- Test reaches engine internals (e.g. PathUtils); it carries no Polyfill of its
+         own, so exposing Core's injected polyfills to it causes no ambiguity. App and
+         the CLI consume Core's public API only and must NOT get InternalsVisibleTo, or
+         Core's internal Polyfill/PolySharp types collide with their own copies. -->
     <InternalsVisibleTo Include="Test" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Polyfill" Version="10.3.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -19,13 +20,4 @@
     <PackageReference Include="System.ValueTuple" Version="4.6.2" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Core\Core.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="Microsoft.VisualBasic" />
-    <Reference Include="System.Web" />
-    <Reference Include="System.Web.Extensions" />
-  </ItemGroup>
 </Project>

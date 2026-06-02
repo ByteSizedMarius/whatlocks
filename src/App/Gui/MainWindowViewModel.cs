@@ -8,7 +8,7 @@ namespace ShowWhatProcessLocksFile.Gui;
 
 internal class MainWindowViewModel : ViewModelBase
 {
-    public string Title => $"{AssemblyInfo.ProgramName} {AssemblyInfo.InformationalVersion}{(Elevation.IsUserAnAdmin() ? " (Admin)" : "")}";
+    public string Title => $"{AssemblyInfo.ProgramName} {AssemblyInfo.InformationalVersion}{(Admin.IsUserAnAdmin() ? " (Admin)" : "")}";
 
     public RelayCommand RefreshCommand { get; }
 
@@ -33,7 +33,7 @@ internal class MainWindowViewModel : ViewModelBase
     {
         FilePath = filePath;
         RefreshCommand = new RelayCommand(GetLockingInformation, () => mainControl is not ProgressBarWithTextViewModel);
-        RestartAsAdministratorCommand = new RelayCommand(RestartAsAdministrator, () => !Elevation.IsUserAnAdmin());
+        RestartAsAdministratorCommand = new RelayCommand(RestartAsAdministrator, () => !Admin.IsUserAnAdmin());
 
         GetLockingInformation();
     }
