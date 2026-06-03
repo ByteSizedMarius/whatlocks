@@ -23,13 +23,23 @@ internal static class Program
         var kill = false;
         var json = false;
         var paths = new List<string>();
+        HashSet<int>? pidFilter = null;
 
-        foreach (var arg in rawArgs)
+        for (var i = 0; i < rawArgs.Length; i++)
         {
+            var arg = rawArgs[i];
             switch (arg)
             {
                 case "--kill": kill = true; break;
                 case "--json": json = true; break;
+                case "--pids":
+                    if (i + 1 >= rawArgs.Length)
+                    {
+                        Console.Error.WriteLine("whatlocks: --pids requires a comma-separated PID list");
+                        return 2;
+                    }
+                    pidFilter = ParsePids(rawArgs[++i]);
+                    break;
                 case "-h":
                 case "--help": PrintUsage(); return 0;
                 default:
@@ -50,7 +60,7 @@ internal static class Program
             return 2;
         }
 
-        var results = paths.Select(path => ScanPath(path, kill)).ToList();
+        var results = paths.Select(path => ScanPath(path, kill, pidFilter)).ToList();
 
         if (json)
         {
@@ -68,7 +78,7 @@ internal static class Program
         return clean ? 0 : 1;
     }
 
-    private static PathResult ScanPath(string rawPath, bool kill)
+    private static PathResult ScanPath(string rawPath, bool kill, HashSet<int>? pidFilter)
     {
         var result = new PathResult { Path = rawPath };
 
@@ -104,16 +114,22 @@ internal static class Program
 
         if (kill)
         {
-            result.KillOutcomes = KillHolders(result.Holders);
+            result.KillOutcomes = KillHolders(result.Holders, pidFilter);
         }
 
         return result;
     }
 
-    private static List<KillOutcome> KillHolders(IEnumerable<ProcessInfo> holders)
+    private static List<KillOutcome> KillHolders(IEnumerable<ProcessInfo> holders, HashSet<int>? pidFilter)
     {
         var outcomes = new List<KillOutcome>();
         var selfPid = Process.GetCurrentProcess().Id;
+
+        // With --pids, only the listed holders are candidates; everything else is left alone.
+        if (pidFilter is not null)
+        {
+            holders = holders.Where(h => pidFilter.Contains(h.Pid));
+        }
 
         foreach (var holder in holders)
         {
@@ -231,11 +247,22 @@ internal static class Program
         }
     }
 
+    private static HashSet<int> ParsePids(string csv)
+    {
+        var set = new HashSet<int>();
+        foreach (var part in csv.Split(','))
+        {
+            if (int.TryParse(part.Trim(), out var pid)) set.Add(pid);
+        }
+        return set;
+    }
+
     private static void PrintUsage()
     {
-        Console.Error.WriteLine("usage: whatlocks [--kill] [--json] <path> [<path> ...]");
+        Console.Error.WriteLine("usage: whatlocks [--kill [--pids <id,...>]] [--json] <path> [<path> ...]");
         Console.Error.WriteLine("  Reports which processes hold a handle on each path.");
         Console.Error.WriteLine("  --kill  terminate the holders (refuses system/critical processes)");
+        Console.Error.WriteLine("  --pids  with --kill, only terminate these PIDs (comma-separated)");
         Console.Error.WriteLine("  --json  emit machine-readable JSON instead of a table");
     }
 
