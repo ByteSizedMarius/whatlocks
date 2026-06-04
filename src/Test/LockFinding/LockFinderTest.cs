@@ -3,6 +3,7 @@ using NUnit.Framework.Legacy;
 using Polyfills;
 using ShowWhatProcessLocksFile.LockFinding;
 using ShowWhatProcessLocksFile.LockFinding.Utils;
+using System.Globalization;
 using System.IO;
 
 namespace Test.LockFinding;
@@ -97,7 +98,7 @@ internal class LockFinderTest
         })]
     public void If_path_is_locked_Returns_information_about_processes_that_lock_this_path(string path, string processName, IEnumerable<string> pathThatShouldBeLocked)
     {
-        var processes = LockFinder.FindWhatProcessesLockPath(new CanonicalPath(path)).ToList();
+        var processes = LockFinder.FindWhatProcessesLockPath(new CanonicalPath(ToCurrentUiLanguage(path))).ToList();
 
         var info = AssertContainsProcessInfo(
             processes,
@@ -105,7 +106,7 @@ internal class LockFinderTest
             $"{processName} process should lock files in the '{path}'");
         foreach (var p in pathThatShouldBeLocked)
         {
-            AssertLocksPath(info, p);
+            AssertLocksPath(info, ToCurrentUiLanguage(p));
         }
 
         Assert.That(info.ProcessExecutableFullName, Is.Not.Null);
@@ -175,6 +176,12 @@ internal class LockFinderTest
         Assert.Greater(infos.Count, 0);
         AssertLocksPath(infos[0], file);
     }
+
+    // *.mui resources load from the display-language dir (e.g. en-GB), not necessarily the en-US
+    // pinned in the TestCases. Map en-US to the running UI language so assertions hold on any
+    // English display language.
+    private static string ToCurrentUiLanguage(string path) =>
+        path.Replace(@"\en-US\", $@"\{CultureInfo.CurrentUICulture.Name}\");
 
     private static ProcessInfo AssertContainsProcessInfo(IEnumerable<ProcessInfo> processes, Predicate<ProcessInfo> condition, string? errorMessage = null)
     {
